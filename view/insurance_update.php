@@ -1,13 +1,20 @@
 <?php
+$insurancedao = new InsuranceDao();
+
 $id = filter_input(1,'id');
 if(isset($id)){
-    $ins = getOneInsurance($id);
+    $insurance = new Insurance();
+    $insurance->setId($id);
+    $ins = getOneInsurance($insurance);
 }
 
 $updated = filter_input(0,"btnUpdateDown");
 if(isset($updated)){
     $name = filter_input(0,"name_class");
-    updInsurance($ins,$name);
+    $insurance = new Insurance();
+    $insurance->setNameClass($name);
+    $insurance->setId($ins);
+    $insurancedao->updInsurance($insurance);
     header("Location:index.php?nav=ins");
 }
 ?>

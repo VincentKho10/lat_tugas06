@@ -1,8 +1,8 @@
 <?php
-include_once "db_function/func_insurance.php";
-include_once "db_function/func_patient.php";
-include_once "db_function/func_user.php";
-include_once "db_function/func_role.php";
+include_once "db_function/InsuranceDao.php";
+include_once "db_function/PatientDao.php";
+include_once "db_function/UserDao.php";
+include_once "db_function/RoleDao.php";
 
 session_start();
 
