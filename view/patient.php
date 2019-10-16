@@ -1,4 +1,7 @@
 <?php
+$patientdao = new PatientDao();
+$insurancedao = new InsuranceDao();
+
 $btnPatClicked = filter_input(0,"btnPatClicked");
 if(isset($btnPatClicked)){
     $mrn = filter_input(0,"mrn");
@@ -19,14 +22,26 @@ if(isset($btnPatClicked)){
         $pto = $dirupload.$namafile;
     }
     $ins = filter_input(0,"ins");
-    addPatient($mrn,$cidn,$nme,$addr,$bhp,$bhd,$phn,$pto,$ins);
+    $patobj = new Patient();
+    $patobj->setMedRecordNumber($mrn);
+    $patobj->setCitizenIdNumber($cidn);
+    $patobj->setName($nme);
+    $patobj->setAddress($addr);
+    $patobj->setBirthPlace($bhp);
+    $patobj->setBirthDate($bhd);
+    $patobj->setPhoneNumber($phn);
+    $patobj->setPhoto($pto);
+    $patobj->setInsurance($ins);
+    $patientdao->addPatient($patobj);
 }
 
 $deleted = filter_input(1,"mrn");
 if(isset($deleted)){
-    $pat = getOnePatient($deleted);
-    unlink($pat['photo']);
-    delPatient($deleted);
+    $patobj = new Patient();
+    $patobj->setMedRecordNumber($deleted);
+    $pat = $patientdao->getOnePatient($patobj);
+    unlink($pat->getPhoto());
+    $patientdao->delPatient($patobj);
     header('Location:index.php?nav=pat');
 }
 ?>
@@ -61,9 +76,10 @@ if(isset($deleted)){
         <label for="insurance">insurance:</label><br>
         <select id="insurance" name="ins">
         <?php
-        $insurances = getAllInsurance();
+        $insurances = $insurancedao->getAllInsurance();
+        /* @var Insurance $item*/
         foreach ($insurances as $item) {
-            echo "<option value='".$item['id']."'>".$item['name_class']."</option>";
+            echo "<option value='".$item->getId()."'>".$item->getNameClass()."</option>";
         }
         ?>
         </select>
@@ -88,21 +104,22 @@ if(isset($deleted)){
     </thead>
     <tbody>
     <?php
-    $patients = getAllPatient();
+    $patients = $patientdao->getAllPatient();
+    /* @var Patient $patient*/
     foreach ($patients as $patient){
-        $patstrg = "'".$patient['med_record_number']."'";
+        $patstrg = "'".$patient->getMedRecordNumber()."'";
         echo '<tr>'
-        .'<td>'.$patient["med_record_number"].'</td>'
-        .'<td>'.$patient["citizen_id_number"].'</td>'
-        .'<td>'.$patient["name"].'</td>'
-        .'<td>'.$patient["address"].'</td>'
-        .'<td>'.$patient["birth_place"].'</td>'
-        .'<td>'.$patient["birth_date"].'</td>'
-        .'<td>'.$patient["phone_number"].'</td>'
-        .'<td><img src="'.$patient["photo"].'"></td>'
-        .'<td>'.$patient["name_class"].'</td>'
+        .'<td>'.$patient->getMedRecordNumber().'</td>'
+        .'<td>'.$patient->getCitizenIdNumber().'</td>'
+        .'<td>'.$patient->getName().'</td>'
+        .'<td>'.$patient->getAddress().'</td>'
+        .'<td>'.$patient->getBirthPlace().'</td>'
+        .'<td>'.$patient->getBirthDate().'</td>'
+        .'<td>'.$patient->getPhoneNumber().'</td>'
+        .'<td><img src="'.$patient->getPhoto().'"></td>'
+        .'<td>'.$patient->getInsurance()->getNameClass().'</td>'
         .'<td><button onclick="patDelete('.$patstrg.')">delete</button>';
-        if($_SESSION['logged_as']["name"]!="Registration Officer"){
+        if($_SESSION['logged_as']!="Registration Officer"){
             echo '<button onclick="patUpdate('.$patstrg.')">update</button></td>';
         }else{
             echo '</td>';

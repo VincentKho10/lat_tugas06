@@ -168,10 +168,11 @@ class Patient
 
     public function __set($name, $value)
     {
+        if(!isset($this->insurance)){
+            $this->insurance = new Insurance();
+        }
+
         switch($name){
-            case "id":
-                $this->getInsurance()->setId($value);
-                break;
             case "name_class":
                 $this->getInsurance()->setNameClass($value);
                 break;

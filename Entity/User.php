@@ -83,7 +83,7 @@ class User
     }
 
     /**
-     * @return mixed
+     * @return Role
      */
     public function getRole()
     {
@@ -91,7 +91,7 @@ class User
     }
 
     /**
-     * @param mixed $role
+     * @param Role $role
      */
     public function setRole($role)
     {
@@ -100,21 +100,21 @@ class User
 
     public function __set($name, $value)
     {
-        if(!isset($role)){
-            $role = new Role();
+        if (!isset($this->role)) {
+            $this->role = new Role();
         }
 
-        switch ($name){
-            case "idusername":
-                /* @var Role $this->getRole*/
-                $this->getRole()->setIdUserName($value);
-                break;
-            case "password":
-                $this->getRole()->setPassword($value);
-                break;
-            case "name":
-                $this->getRole()->setName($value);
-                break;
+        if (isset($value)) {
+            switch ($name) {
+                case 'rid':
+                    $this->getRole()->setId($value);
+                    break;
+                case 'rname':
+                    $this->getRole()->setName($value);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

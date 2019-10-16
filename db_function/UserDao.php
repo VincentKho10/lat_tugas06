@@ -5,11 +5,11 @@ class UserDao
 {
     public function loginUser(User $usr){
         $link = DBHelper::createConnection();
-        $stmt = $link->prepare("SELECT r.name FROM user u JOIN role r ON u.role_id = r.id WHERE username=? AND password=?");
+        $stmt = $link->prepare("SELECT u.id, u.username, u.password, u.name, r.id AS 'rid', r.name AS 'rname'  FROM user u JOIN role r ON u.role_id = r.id WHERE username=? AND password=?");
         $stmt->bindValue(1,$usr->getUsername(),2);
         $stmt->bindValue(2,$usr->getPassword(),2);
         $stmt->execute();
-        $result = $stmt->fetchObject("User");
+        $result = $stmt->fetchAll(8|1048576,"User");
         $link = null;
         return $result;
     }
@@ -17,7 +17,7 @@ class UserDao
     public function getAllUser(){
         $link = DBHelper::createConnection();
         $result = $link->query("SELECT u.id,u.name,u.password,r.name AS role_name FROM user u JOIN role r ON u.role_id=r.id");
-        $result->setFetchMode(8,1048576,"User");
+        $result->setFetchMode(8|1048576,"User");
         $link=null;
         return $result;
     }
@@ -27,7 +27,6 @@ class UserDao
         $stmt = $link->prepare("SELECT * FROM user WHERE id=?");
         $stmt->bindValue(1,$usr->getId(),1);
         $stmt->execute();
-        $result = $stmt->fetch();
         $result = $stmt->fetchObject("User");
         $link = null;
         return $result;

@@ -1,7 +1,12 @@
 <?php
+$patientdao = new PatientDao();
+$insurancedao = new InsuranceDao();
+
 $mrn=filter_input(1,"mrn");
 if(isset($mrn)){
-    $mrns = getOnePatient($mrn);
+    $patobj = new Patient();
+    $patobj->setMedRecordNumber($mrn);
+    $mrns = $patientdao->getOnePatient($patobj);
     var_dump($mrns);
 }
 
@@ -17,15 +22,25 @@ if(isset($updated)){
     $namafile = $mrn;
     if(($_FILES['pto']['name'] == null) == 1){
         echo "kolom file kosong";
-        $pto = $mrns['photo'];
+        $pto = $mrns->getPhoto();
     }else{
-        unlink($mrns['photo']);
+        unlink($mrns->getPhoto());
         $namatemp = $_FILES['pto']['tmp_name'];
         $namadir = "upload/";
         move_uploaded_file($namatemp,$namadir.$namafile);
         $pto = $namadir.$namafile;
     }
-    updPatient($mrn,$cidn,$nme,$addr,$bhp,$bhd,$phn,$pto,$ins);
+    $patobj = new Patient();
+    $patobj->setMedRecordNumber($mrn);
+    $patobj->setCitizenIdNumber($cidn);
+    $patobj->setName($nme);
+    $patobj->setAddress($addr);
+    $patobj->setBirthPlace($bhp);
+    $patobj->setBirthDate($bhd);
+    $patobj->setPhoneNumber($phn);
+    $patobj->setPhoto($pto);
+    $patobj->setInsurance($ins);
+    $patientdao->updPatient($patobj);
     header("Location:index.php?nav=pat");
 }
 ?>
@@ -35,55 +50,57 @@ if(isset($updated)){
     <form method="post" enctype="multipart/form-data">
         <label for="citidnum">citizen id number:</label><br>
         <?php
-            echo'<input type="text" id="citidnum" name="cidn" value="'.$mrns["citizen_id_number"].'">';
+        /* @var Patient $mrns*/
+            echo'<input type="text" id="citidnum" name="cidn" value="'.$mrns->getCitizenIdNumber().'">';
         ?>
         <br>
 
         <label for="name">name:</label><br>
         <?php
-        echo '<input type="text" id="name" name="nme" value="'.$mrns["name"].'">';
+        echo '<input type="text" id="name" name="nme" value="'.$mrns->getName().'">';
         ?>
         <br>
 
         <label for="addr">address:</label><br>
         <?php
-            echo '<input type="text" id="addr" name="adr" value="'.$mrns["address"].'">';
+            echo '<input type="text" id="addr" name="adr" value="'.$mrns->getAddress().'">';
         ?>
         <br>
 
         <label for="bipl">birth place:</label><br>
         <?php
-            echo '<input type="text" id="bipl" name="bhp" value="'.$mrns["birth_place"].'">';
+            echo '<input type="text" id="bipl" name="bhp" value="'.$mrns->getBirthPlace().'">';
         ?>
         <br>
 
         <label for="bida">birth date:</label><br>
         <?php
-            echo '<input type="date" id="bida" name="bhd" value="'.$mrns["birth_date"].'">';
+            echo '<input type="date" id="bida" name="bhd" value="'.$mrns->getBirthDate().'">';
         ?>
         <br>
 
         <label for="phnum">phone number:</label><br>
         <?php
-            echo '<input type="text" id="phnum" name="phn" value="'.$mrns["phone_number"].'">';
+            echo '<input type="text" id="phnum" name="phn" value="'.$mrns->getPhoneNumber().'">';
         ?>
         <br>
 
         <label for="phto">photo:</label><br>
         <?php
-            echo '<input type="file" id="phto" name="pto" value="'.$mrns["photo"].'">';
+            echo '<input type="file" id="phto" name="pto" value="'.$mrns->getPhoto().'">';
         ?>
         <br>
 
         <label for="insurance">insurance:</label><br>
         <select id="insurance" name="ins">
             <?php
-            $insurances = getAllInsurance();
+            $insurances = $insurancedao->getAllInsurance();
+            /* @var Insurance $item*/
             foreach ($insurances as $item) {
-                if($item['id']==$mrns['insurance_id']){
-                    echo "<option value='".$item['id']."' selected>".$item['name_class']."</option>";
+                if($item->getId()==$mrns->getInsurance()){
+                    echo "<option value='".$item->getNameClass()."' selected>".$item->getNameClass()."</option>";
                 }else{
-                    echo "<option value='".$item['id']."'>".$item['name_class']."</option>";
+                    echo "<option value='".$item->getId()."'>".$item->getNameClass()."</option>";
                 }
             }
             ?>

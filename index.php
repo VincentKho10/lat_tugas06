@@ -3,6 +3,11 @@ include_once "db_function/InsuranceDao.php";
 include_once "db_function/PatientDao.php";
 include_once "db_function/UserDao.php";
 include_once "db_function/RoleDao.php";
+include_once "Entity/Insurance.php";
+include_once "Entity/Patient.php";
+include_once "Entity/Role.php";
+include_once "Entity/User.php";
+include_once "Util/DBHelper.php";
 
 session_start();
 
@@ -27,8 +32,7 @@ if(!isset($_SESSION['loggedin'])){
         if(!$_SESSION['loggedin']){
             include_once "view/login.php";
         }else {
-            var_dump($_SESSION);
-            switch ($_SESSION['logged_as'][0]){
+            switch ($_SESSION['logged_as']){
                 case"Admin":
                     ?>
                     <nav>

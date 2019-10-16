@@ -11,8 +11,8 @@ if(isset($addBtnClicked)){
 $deleted=filter_input(1,"id");
 if(isset($deleted)){
     $insurance = new Insurance();
-    $insurance->setNameClass($deleted);
-    delInsurance($insurance);
+    $insurance->setId($deleted);
+    $insurancedao->delInsurance($insurance);
     header("Location:index.php?nav=ins");
 }
 ?>

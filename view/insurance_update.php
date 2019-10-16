@@ -5,7 +5,7 @@ $id = filter_input(1,'id');
 if(isset($id)){
     $insurance = new Insurance();
     $insurance->setId($id);
-    $ins = getOneInsurance($insurance);
+    $ins = $insurancedao->getOneInsurance($insurance);
 }
 
 $updated = filter_input(0,"btnUpdateDown");
@@ -13,7 +13,7 @@ if(isset($updated)){
     $name = filter_input(0,"name_class");
     $insurance = new Insurance();
     $insurance->setNameClass($name);
-    $insurance->setId($ins);
+    $insurance->setId($id);
     $insurancedao->updInsurance($insurance);
     header("Location:index.php?nav=ins");
 }
@@ -26,7 +26,8 @@ if(isset($updated)){
     <form method="post">
         <label for="name">name class: </label>
         <?php
-            echo '<input type="text" id="name" name="name_class" value="'.$ins['name_class'].'">';
+            /* @var Insurance $ins*/
+            echo '<input type="text" id="name" name="name_class" value="'.$ins->getNameClass().'">';
         ?>
         <button type="submit" name="btnUpdateDown">update</button>
     </form>

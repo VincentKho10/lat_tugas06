@@ -6,7 +6,7 @@ class InsuranceDao
     public function getAllInsurance(){
         $link = DBHelper::createConnection();
         $result = $link->query("SELECT * FROM insurance");
-        $result->setFetchMode(8,1048576,"Insurance");
+        $result->setFetchMode(8|1048576,"Insurance");
         $link = null;
         return $result;
     }

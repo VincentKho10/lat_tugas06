@@ -6,7 +6,7 @@ class RoleDao
     public function getAllRole(){
         $link = DBHelper::createConnection();
         $result = $link->query("SELECT * FROM role");
-        $result->setFetchMode(8,1048576,"Role");
+        $result->setFetchMode(8|1048576,"Role");
         $link = null;
         return $result;
     }

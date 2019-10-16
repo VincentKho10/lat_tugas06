@@ -7,7 +7,7 @@ class PatientDao
         $link = DBHelper::createConnection();
         $query = "SELECT med_record_number, citizen_id_number, name, address, birth_place, birth_date, phone_number, photo, name_class FROM patient JOIN insurance ON insurance_id = id";
         $result = $link->query($query);
-        $result->setFetchMode(8,1048576,"Patient");
+        $result->setFetchMode(8|1048576,"Patient");
         $link = null;
         return $result;
     }
@@ -18,7 +18,7 @@ class PatientDao
         $stmt = $link->prepare($query);
         $stmt->bindValue(1,$pat->getMedRecordNumber(),2);
         $stmt->execute();
-        $result = $stmt->setFetchMode("Patient");
+        $result = $stmt->fetchObject("Patient");
         $link = null;
         return $result;
     }
@@ -31,7 +31,7 @@ class PatientDao
         $stmt->bindValue(2,$pat->getCitizenIdNumber(),2);
         $stmt->bindValue(3,$pat->getName(),2);
         $stmt->bindValue(4,$pat->getAddress(),2);
-        $stmt->bindValue(5,$pat->getBirthDate(),2);
+        $stmt->bindValue(5,$pat->getBirthPlace(),2);
         $stmt->bindValue(6,$pat->getBirthDate(),2);
         $stmt->bindValue(7,$pat->getPhoneNumber(),2);
         $stmt->bindValue(8,$pat->getPhoto(),2);
@@ -68,7 +68,7 @@ class PatientDao
         $stmt->bindValue(1,$pat->getCitizenIdNumber(),2);
         $stmt->bindValue(2,$pat->getName(),2);
         $stmt->bindValue(3,$pat->getAddress(),2);
-        $stmt->bindValue(4,$pat->getBirthDate(),2);
+        $stmt->bindValue(4,$pat->getBirthPlace(),2);
         $stmt->bindValue(5,$pat->getBirthDate(),2);
         $stmt->bindValue(6,$pat->getPhoneNumber(),2);
         $stmt->bindValue(7,$pat->getPhoto(),2);
